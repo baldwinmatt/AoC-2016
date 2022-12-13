@@ -40,15 +40,49 @@
 namespace aoc {
 
     using Point = std::pair<int, int>;
-    // Needed if we want to store a point in a hash
+
+}
+
+aoc::Point operator+(const aoc::Point& lhs, const aoc::Point& rhs) {
+    aoc::Point out{lhs.first + rhs.first, lhs.second + rhs.second};
+    return out;
+}
+
+aoc::Point operator*(const aoc::Point& lhs, const int x) {
+    aoc::Point out{lhs.first * x, lhs.second * x};
+    return out;
+}
+
+aoc::Point& operator+=(aoc::Point& lhs, const aoc::Point& rhs) {
+    lhs.first += rhs.first;
+    lhs.second += rhs.second;
+    return lhs;
+}
+
+aoc::Point& operator*=(aoc::Point& lhs, const int x) {
+    lhs.first *= x;
+    lhs.second *= x;
+    return lhs;
+}
+
+aoc::Point operator-(const aoc::Point& lhs, const aoc::Point& rhs) {
+    aoc::Point out{lhs.first - rhs.first, lhs.second - rhs.second};
+    return out;
+}
+namespace aoc { 
+   // Needed if we want to store a point in a hash
     struct PointHash {
-        std::size_t operator() (const Point& pair) const {
+        std::size_t operator() (const aoc::Point& pair) const {
             size_t v = pair.first;
             v <<= 32;
             v |= pair.second;
             return v;
         }
     };
+
+    template <typename T> int sgn(T val) {
+        return (T(0) < val) - (val < T(0));
+    }
 
     enum class CardinalDirection {
         North = 0,
@@ -90,7 +124,7 @@ namespace aoc {
         return fromBearing(bearing);
     }
 
-    Point stepFromCardinalDirection(CardinalDirection dir) {
+    aoc::Point stepFromCardinalDirection(CardinalDirection dir) {
         switch (dir) {
             case CardinalDirection::North:
                 return { 0, 1 };
@@ -104,9 +138,9 @@ namespace aoc {
         throw std::runtime_error("Bad direction: " + std::to_string(static_cast<int32_t>(dir)));
     }
 
-    aoc::Point moveInDirection(const Point pt, CardinalDirection dir, int steps) {
-      aoc::Point step = aoc::stepFromCardinalDirection(dir);
-      return { pt.first + (step.first * steps), pt.second + (step.second * steps) };
+    aoc::Point moveInDirection(const aoc::Point pt, CardinalDirection dir, int steps) {
+      aoc::Point step = stepFromCardinalDirection(dir) * steps;
+      return pt + step;
     }
 
     const auto print_result = [](int part, auto result) {
@@ -299,7 +333,7 @@ namespace aoc {
         std::string l;
         while (getline(s, l, delim)) {
             try {
-                const auto n = aoc::stoi(l);
+                const auto n = stoi(l);
                 op(n);
             } catch (...) { }
         }
@@ -308,7 +342,7 @@ namespace aoc {
         std::string l;
         while (getline(s, l, delims)) {
             try {
-                const auto n = aoc::stoi(l);
+                const auto n = stoi(l);
                 op(n);
             } catch (...) { }
         }
@@ -317,7 +351,7 @@ namespace aoc {
         std::string l;
         while (getline(s, l)) {
             try {
-                const auto n = aoc::stoi(l);
+                const auto n = stoi(l);
                 op(n);
             } catch (...) { }
         }
@@ -327,7 +361,7 @@ namespace aoc {
         std::string_view l;
         while (getline(ss, l, delim)) {
             try {
-                const auto n = aoc::stoi(l);
+                const auto n = stoi(l);
                 op(n);
             } catch (...) { }
         }
@@ -337,7 +371,7 @@ namespace aoc {
         std::string_view l;
         while (getline(ss, l, delims)) {
             try {
-                const auto n = aoc::stoi(l);
+                const auto n = stoi(l);
                 op(n);
             } catch (...) { }
         }
